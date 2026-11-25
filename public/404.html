@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cultured Pearl</title>
+    <script>
+      // Single Page Application URL redirect
+      var path = window.location.pathname;
+      var search = window.location.search || '';
+      var hash = window.location.hash || '';
+      if (path && path !== '/') {
+        window.location.replace('/#' + path + search + hash);
+      } else {
+        window.location.replace('/' + search + hash);
+      }
+    </script>
+  </head>
+  <body>
+    <p>Redirecting to Cultured Pearl...</p>
+  </body>
+</html>

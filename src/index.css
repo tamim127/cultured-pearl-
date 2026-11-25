@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --radius: 0.125rem;
+  --pearl: oklch(98.5% 0.006 90);
+  --sand: oklch(94.5% 0.017 86);
+  --espresso: oklch(31% 0.011 70);
+  --gold: oklch(68.8% 0.106 84);
+  --gold-soft: oklch(84% 0.062 88);
+  --background: oklch(97.7% 0.013 88);
+  --foreground: oklch(26.8% 0.01 70);
+  --card: oklch(99% 0.007 90);
+  --card-foreground: oklch(26.8% 0.01 70);
+  --popover: oklch(99% 0.007 90);
+  --popover-foreground: oklch(26.8% 0.01 70);
+  --primary: oklch(31% 0.011 70);
+  --primary-foreground: oklch(97.7% 0.013 88);
+  --secondary: oklch(94.5% 0.017 86);
+  --secondary-foreground: oklch(31% 0.011 70);
+  --muted: oklch(94.5% 0.017 86);
+  --muted-foreground: oklch(52% 0.017 72);
+  --accent: oklch(68.8% 0.106 84);
+  --accent-foreground: oklch(22% 0.01 70);
+  --destructive: oklch(55% 0.16 28);
+  --destructive-foreground: oklch(98% 0.01 88);
+  --border: oklch(89.7% 0.022 86);
+  --input: oklch(89.7% 0.022 86);
+  --ring: oklch(68.8% 0.106 84);
+  --shadow-soft: 0 24px 60px -32px var(--espresso);
+  --gradient-veil: linear-gradient(
+    to top,
+    rgba(35, 30, 26, 0.92),
+    rgba(35, 30, 26, 0.62) 55%,
+    rgba(35, 30, 26, 0.32)
+  );
+}
+
+@supports (color: color-mix(in lab, red, red)) {
+  :root {
+    --gradient-veil: linear-gradient(
+      to top,
+      color-mix(in oklab, var(--espresso) 92%, transparent),
+      color-mix(in oklab, var(--espresso) 62%, transparent) 55%,
+      color-mix(in oklab, var(--espresso) 32%, transparent)
+    );
+  }
+}
+
+body {
+  font-family: "Karla", ui-sans-serif, system-ui, sans-serif;
+  color: var(--foreground);
+  background-color: var(--background);
+}
+
+h1, h2, h3, h4, h5, h6, blockquote, .font-display {
+  font-family: "Cormorant Garamond", Georgia, serif;
+}
+
+.veil {
+  background-image: var(--gradient-veil);
+}
+
+.rule-gold::after {
+  content: "";
+  background: var(--gold);
+  width: 3rem;
+  height: 1px;
+  margin-top: 1.25rem;
+  display: block;
+}
+
+.eyebrow {
+  font-family: "Karla", ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  font-size: 0.6875rem;
+  font-weight: 600;
+}

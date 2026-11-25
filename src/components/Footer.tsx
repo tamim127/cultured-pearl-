@@ -1,0 +1,143 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { IMAGES } from '../constants/images';
+
+export function Footer() {
+  return (
+    <footer className="bg-espresso text-pearl border-t border-gold/30">
+      <div className="max-w-7xl mx-auto px-6 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
+          {/* Brand */}
+          <div className="lg:col-span-2 space-y-4">
+            <div className="flex items-center gap-3">
+              <img
+                src={IMAGES.logo}
+                alt="Cultured Pearl"
+                className="h-10 w-auto object-contain brightness-125"
+              />
+              <div>
+                <span className="font-serif text-xl tracking-wider text-pearl uppercase block">
+                  Cultured Pearl
+                </span>
+                <span className="text-[10px] tracking-[0.25em] uppercase text-gold font-sans">
+                  501(c)(3) Nonprofit
+                </span>
+              </div>
+            </div>
+            <p className="text-pearl/70 text-sm font-sans leading-relaxed max-w-sm">
+              Bringing women into God's light. Empowering through sisterhood, faith, higher education scholarships, and community service.
+            </p>
+            <p className="font-serif italic text-sm text-gold-soft">
+              &ldquo;And I will put this third into the fire, and refine them as one refines silver, and test them as gold is tested.&rdquo; — Zechariah 13:9
+            </p>
+          </div>
+
+          {/* Quick Links */}
+          <div>
+            <h4 className="text-xs uppercase tracking-[0.2em] text-gold font-bold mb-4 font-sans">
+              Programs
+            </h4>
+            <ul className="space-y-2.5 text-sm font-sans text-pearl/80">
+              <li>
+                <Link to="/debutante" className="hover:text-gold transition">
+                  Debutante Ball
+                </Link>
+              </li>
+              <li>
+                <Link to="/scholarship" className="hover:text-gold transition">
+                  Purposeful Life Scholarship
+                </Link>
+              </li>
+              <li>
+                <Link to="/events" className="hover:text-gold transition">
+                  Upcoming Events
+                </Link>
+              </li>
+              <li>
+                <Link to="/shop" className="hover:text-gold transition">
+                  Magazine Store
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Organization */}
+          <div>
+            <h4 className="text-xs uppercase tracking-[0.2em] text-gold font-bold mb-4 font-sans">
+              About
+            </h4>
+            <ul className="space-y-2.5 text-sm font-sans text-pearl/80">
+              <li>
+                <Link to="/about" className="hover:text-gold transition">
+                  Our Mission
+                </Link>
+              </li>
+              <li>
+                <Link to="/meet-the-team" className="hover:text-gold transition">
+                  Meet the Team
+                </Link>
+              </li>
+              <li>
+                <Link to="/gallery" className="hover:text-gold transition">
+                  Photo Gallery
+                </Link>
+              </li>
+              <li>
+                <Link to="/videos" className="hover:text-gold transition">
+                  Video Archive
+                </Link>
+              </li>
+              <li>
+                <Link to="/blog" className="hover:text-gold transition">
+                  Blog & Articles
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Get Involved */}
+          <div>
+            <h4 className="text-xs uppercase tracking-[0.2em] text-gold font-bold mb-4 font-sans">
+              Support
+            </h4>
+            <ul className="space-y-2.5 text-sm font-sans text-pearl/80">
+              <li>
+                <Link to="/give" className="hover:text-gold transition">
+                  Make a Donation
+                </Link>
+              </li>
+              <li>
+                <Link to="/get-involved" className="hover:text-gold transition">
+                  Volunteer & Partner
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" className="hover:text-gold transition">
+                  Contact Us
+                </Link>
+              </li>
+            </ul>
+            <div className="mt-6 pt-4 border-t border-pearl/10 text-xs text-pearl/60">
+              <p>Email:</p>
+              <a
+                href="mailto:sharondasavoy@culturedpearl.org"
+                className="text-gold hover:underline font-mono text-[11px]"
+              >
+                sharondasavoy@culturedpearl.org
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-12 pt-8 border-t border-pearl/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-sans text-pearl/50">
+          <p>© {new Date().getFullYear()} Cultured Pearl. A 501(c)(3) nonprofit organization. All rights reserved.</p>
+          <div className="flex gap-6">
+            <Link to="/about" className="hover:text-gold">Mission</Link>
+            <Link to="/give" className="hover:text-gold">Tax Exemption</Link>
+            <Link to="/contact" className="hover:text-gold">Inquiries</Link>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
