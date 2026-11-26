@@ -9,21 +9,13 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
           {/* Brand */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center gap-3">
+            <Link to="/" className="inline-block bg-pearl/10 p-2 rounded-xl backdrop-blur-sm hover:bg-pearl/15 transition-colors">
               <img
                 src={IMAGES.logo}
                 alt="Cultured Pearl"
-                className="h-10 w-auto object-contain brightness-125"
+                className="h-14 w-auto object-contain brightness-110"
               />
-              <div>
-                <span className="font-serif text-xl tracking-wider text-pearl uppercase block">
-                  Cultured Pearl
-                </span>
-                <span className="text-[10px] tracking-[0.25em] uppercase text-gold font-sans">
-                  501(c)(3) Nonprofit
-                </span>
-              </div>
-            </div>
+            </Link>
             <p className="text-pearl/70 text-sm font-sans leading-relaxed max-w-sm">
               Bringing women into God's light. Empowering through sisterhood, faith, higher education scholarships, and community service.
             </p>

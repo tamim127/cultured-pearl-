@@ -10,6 +10,7 @@ export default defineConfig({
     },
   },
   build: {
+    assetsInlineLimit: 100000,
     rollupOptions: {
       external: [
         'react',

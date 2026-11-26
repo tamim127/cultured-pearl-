@@ -23,20 +23,12 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 bg-pearl/95 backdrop-blur-md border-b border-sand">
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-3">
+        <Link to="/" className="flex items-center py-1 group">
           <img
             src={IMAGES.logo}
             alt="Cultured Pearl"
-            className="h-10 w-auto object-contain"
+            className="h-14 md:h-16 w-auto max-w-[200px] object-contain transition-transform duration-200 group-hover:scale-105"
           />
-          <div className="hidden sm:block">
-            <span className="font-serif text-xl font-bold tracking-wider text-espresso uppercase block leading-none">
-              Cultured Pearl
-            </span>
-            <span className="text-[10px] tracking-[0.25em] uppercase text-gold font-sans font-medium">
-              A 501(c)(3) Nonprofit
-            </span>
-          </div>
         </Link>
 
         {/* Desktop Nav */}
