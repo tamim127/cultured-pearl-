@@ -1,80 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { PageHeader } from '../components/PageHeader';
 import { Section } from '../components/Section';
 import { Eyebrow } from '../components/Eyebrow';
-import { IMAGES } from '../constants/images';
+import { fetchMediaGallery, fetchPageContent, useWixLiveRefresh, GalleryMediaItem, GenericPageContent } from '../services/wixClient';
 
 export function Gallery() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [galleryItems, setGalleryItems] = useState<GalleryMediaItem[]>([]);
+  const [pageData, setPageData] = useState<GenericPageContent>({
+    eyebrow: 'Photo Gallery',
+    pageTitle: 'Night of the Pearl & Gatherings',
+    description: "Bringing women into God's light — a visual chronicle of sisterhood, service, elegance, and joyful fellowship.",
+  });
 
-  const galleryImages = [
-    {
-      src: IMAGES.gathering,
-      title: 'Sisterhood Annual Gala',
-      caption: 'Gathering in joy and reverence at the historic Night of the Cultured Pearl.',
-    },
-    {
-      src: IMAGES.celebration,
-      title: 'Pearls of Excellence Honorees',
-      caption: 'Celebrating phenomenal women who shine God’s light into our community.',
-    },
-    {
-      src: IMAGES.teaParty,
-      title: 'Mother’s Day Tea Celebration',
-      caption: 'Honoring mothers and grandmothers with high tea and fellowship.',
-    },
-    {
-      src: IMAGES.heroWomen,
-      title: 'Daughters of the King Sanctuary',
-      caption: 'Uplifting praise and faith devotionals.',
-    },
-    {
-      src: IMAGES.community,
-      title: 'Community Empowerment Day',
-      caption: 'Serving families, distributing shoes, and building community hope.',
-    },
-    {
-      src: IMAGES.debutanteGroup,
-      title: 'Debutante Ball Program',
-      caption: 'Mentorship and poise for our next generation of young women leaders.',
-    },
-    {
-      src: IMAGES.scholarshipWinner,
-      title: 'Purposeful Life Scholarship',
-      caption: 'Recognizing academic merit and steadfast Christian faith.',
-    },
-    {
-      src: IMAGES.founder,
-      title: 'Founder Fellowship',
-      caption: 'Walking in divine calling and sisterhood.',
-    },
-  ];
+  const loadGallery = useCallback(() => {
+    fetchPageContent('GalleryPage', pageData).then(setPageData);
+    fetchMediaGallery().then(setGalleryItems);
+  }, []);
+
+  useEffect(() => {
+    loadGallery();
+  }, [loadGallery]);
+
+  useWixLiveRefresh(loadGallery);
 
   return (
     <div>
       <PageHeader
-        eyebrow="Photo Gallery"
-        title="Night of the Pearl & Gatherings"
-        subtitle="Bringing women into God's light — a visual chronicle of sisterhood, service, elegance, and joyful fellowship."
+        eyebrow={pageData.eyebrow || 'Photo Gallery'}
+        title={pageData.pageTitle || 'Night of the Pearl & Gatherings'}
+        subtitle={pageData.description}
       />
 
       <Section tone="pearl">
         <div className="max-w-3xl mx-auto text-center mb-12">
-          <Eyebrow text="Visual Chronicle" />
+          <Eyebrow text="Visual Chronicle · Wix Media" />
           <h2 className="font-serif text-3xl text-espresso font-bold mt-2">Moments of Light & Love</h2>
           <div className="w-16 h-0.5 bg-gold mx-auto my-4" />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {galleryImages.map((item, idx) => (
+          {galleryItems.map((item, idx) => (
             <div
               key={idx}
-              onClick={() => setSelectedImage(item.src)}
+              onClick={() => setSelectedImage(item.url || item.image || '')}
               className="group relative cursor-pointer overflow-hidden rounded-2xl bg-sand/30 border border-sand shadow-soft aspect-square"
             >
               <img
-                src={item.src}
-                alt={item.title}
+                src={item.url || item.image}
+                alt={item.alt || item.title}
                 className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                 loading="lazy"
               />

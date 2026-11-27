@@ -1,13 +1,11 @@
-import logoUrl from '../assets/logo.png';
-
 /**
  * Curated high-resolution imagery directly from live Wix site CDN
  * All assets originate from https://static.wixstatic.com/media/
  */
 export const IMAGES = {
   // Brand & Logos
-  logo: logoUrl,
-  logoSquare: logoUrl,
+  logo: '/logo.png',
+  logoSquare: '/logo.png',
   
   // Hero & Backgrounds
   heroWomen: 'https://static.wixstatic.com/media/81bfa3_a8ad7faef04a4e81a69d34142fa9408a~mv2.jpg',

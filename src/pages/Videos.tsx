@@ -1,36 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { PageHeader } from '../components/PageHeader';
 import { Section } from '../components/Section';
-import { Eyebrow } from '../components/Eyebrow';
+import { fetchVideoItems, fetchPageContent, useWixLiveRefresh, VideoItem, GenericPageContent } from '../services/wixClient';
 
 export function Videos() {
-  const videoEntries = [
-    {
-      title: 'Bringing Women Into God’s Light — Mission Highlight',
-      speaker: 'Sharonda Savoy, Executive Director',
-      duration: '5:40',
-      description: 'The divine inspiration behind the founding of Cultured Pearl, based on Zechariah 13:9.',
-    },
-    {
-      title: 'Pearls of Excellence Gala Highlights',
-      speaker: 'Cultured Pearl Board & Community Guests',
-      duration: '8:25',
-      description: 'An evening celebrating women of faith, resilience, and extraordinary community impact.',
-    },
-    {
-      title: 'A Mental Cleansing Seminar Excerpt',
-      speaker: 'Dr. Pamela Gurley & Panelists',
-      duration: '12:10',
-      description: 'Holistic wellness, biblical wisdom, and overcoming life challenges with strength and dignity.',
-    },
-  ];
+  const [videoEntries, setVideoEntries] = useState<VideoItem[]>([]);
+  const [pageData, setPageData] = useState<GenericPageContent>({
+    eyebrow: 'Media & Highlights',
+    pageTitle: 'Video Archive',
+    description: "Bringing women into God's light — recorded messages, keynote reflections, and highlights from our annual gatherings.",
+  });
+
+  const loadVideos = useCallback(() => {
+    fetchPageContent('VideosPage', pageData).then(setPageData);
+    fetchVideoItems().then(setVideoEntries);
+  }, []);
+
+  useEffect(() => {
+    loadVideos();
+  }, [loadVideos]);
+
+  useWixLiveRefresh(loadVideos);
 
   return (
     <div>
       <PageHeader
-        eyebrow="Media & Highlights"
-        title="Video Archive"
-        subtitle="Bringing women into God's light — recorded messages, keynote reflections, and highlights from our annual gatherings."
+        eyebrow={pageData.eyebrow || 'Media & Highlights'}
+        title={pageData.pageTitle || 'Video Archive'}
+        subtitle={pageData.description}
       />
 
       <Section tone="sand">
@@ -45,19 +42,19 @@ export function Videos() {
                   ▶
                 </span>
                 <span className="text-[10px] uppercase tracking-widest text-gold-soft mt-3 font-bold">
-                  {vid.duration} Video
+                  Featured Video
                 </span>
               </div>
 
               <div className="flex-1 space-y-2">
                 <span className="text-xs uppercase tracking-widest text-gold font-bold">
-                  {vid.speaker}
+                  Cultured Pearl Media
                 </span>
                 <h3 className="font-serif text-2xl font-bold text-espresso">{vid.title}</h3>
                 <p className="font-sans text-sm text-espresso/70 leading-relaxed">{vid.description}</p>
                 <div className="pt-2">
                   <a
-                    href="https://www.youtube.com/@culturedpearl"
+                    href={`https://www.youtube.com/watch?v=${vid.youtubeId || 'dQw4w9WgXcQ'}`}
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center text-xs uppercase tracking-wider text-gold font-bold hover:underline"

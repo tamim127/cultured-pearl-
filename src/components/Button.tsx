@@ -15,6 +15,7 @@ export interface ButtonProps {
   target?: string;
   rel?: string;
   type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
 }
 
 const variants: Record<ButtonVariant, string> = {
@@ -38,11 +39,18 @@ export function Button({
   target,
   rel,
   type = 'button',
+  disabled = false,
 }: ButtonProps) {
   const sizeStyles = size === 'sm' ? 'px-4 py-2 text-[0.65rem]' : 'px-6 py-2.5';
-  const combinedClasses = cn(baseStyles, sizeStyles, variants[variant], className);
+  const combinedClasses = cn(
+    baseStyles,
+    sizeStyles,
+    variants[variant],
+    disabled && "opacity-60 cursor-not-allowed pointer-events-none",
+    className
+  );
 
-  if (to) {
+  if (to && !disabled) {
     return (
       <Link to={to} className={combinedClasses} onClick={onClick}>
         {children}
@@ -50,7 +58,7 @@ export function Button({
     );
   }
 
-  if (href) {
+  if (href && !disabled) {
     return (
       <a
         href={href}
@@ -69,6 +77,7 @@ export function Button({
       type={type}
       className={combinedClasses}
       onClick={onClick}
+      disabled={disabled}
     >
       {children}
     </button>

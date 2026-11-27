@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getEventBySlug, rsvpForEvent } from '../services/wixEvents';
+import { useWixLiveRefresh } from '../services/wixClient';
 import { LiveEvent } from '../data/eventsData';
 import { PageHeader } from '../components/PageHeader';
 import { Section } from '../components/Section';
@@ -19,15 +20,21 @@ export function EventDetail() {
   const [guestNotes, setGuestNotes] = useState('');
   const [rsvpStatus, setRsvpStatus] = useState<string | null>(null);
 
-  useEffect(() => {
+  const loadEvent = useCallback(() => {
     if (slug) {
-      setLoading(true);
       getEventBySlug(slug).then((evt) => {
         setEvent(evt || null);
         setLoading(false);
       });
     }
   }, [slug]);
+
+  useEffect(() => {
+    setLoading(true);
+    loadEvent();
+  }, [loadEvent]);
+
+  useWixLiveRefresh(loadEvent);
 
   const handleRsvp = async (e: React.FormEvent) => {
     e.preventDefault();

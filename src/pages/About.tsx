@@ -1,8 +1,10 @@
+import React, { useState, useEffect, useCallback } from 'react';
 import { PageHeader } from '@/components/PageHeader';
 import { Section } from '@/components/Section';
 import { Eyebrow } from '@/components/Eyebrow';
 import { Button } from '@/components/Button';
 import { IMAGES } from '@/constants/images';
+import { fetchSiteSettings, useWixLiveRefresh, SiteSettingsMap } from '@/services/wixClient';
 
 const values = [
   {
@@ -20,6 +22,22 @@ const values = [
 ];
 
 export function About() {
+  const [settings, setSettings] = useState<SiteSettingsMap>({
+    site_name: 'Cultured Pearl',
+    tagline: "Bringing Women into God's Light",
+    email: 'info@culturedpearl.org',
+  });
+
+  const loadAbout = useCallback(() => {
+    fetchSiteSettings().then(setSettings);
+  }, []);
+
+  useEffect(() => {
+    loadAbout();
+  }, [loadAbout]);
+
+  useWixLiveRefresh(loadAbout);
+
   return (
     <>
       <PageHeader
@@ -44,9 +62,7 @@ export function About() {
             <div>
               <Eyebrow>God's women</Eyebrow>
               <p className="mt-6 text-base leading-relaxed text-muted-foreground">
-                “Strength and dignity are her clothing, and she laughs at the
-                time to come. She opens her mouth with wisdom, and the teaching
-                of kindness is on her tongue.”
+                “Strength and dignity are her clothing, and she laughs at the time to come. She opens her mouth with wisdom, and the teaching of kindness is on her tongue.”
                 <span className="mt-3 block text-[0.7rem] font-semibold uppercase tracking-[0.24em] text-gold">
                   Proverbs 31:25–26
                 </span>
@@ -55,19 +71,13 @@ export function About() {
             <div>
               <Eyebrow>Our vision</Eyebrow>
               <p className="mt-6 text-base leading-relaxed text-muted-foreground">
-                To bring women into God's light through teaching and being. We
-                offer seminars centered on God's word that support real-world
-                examples of how the Bible meets everyday challenges — finances,
-                time management, counseling, managing home and life, and
-                exploring the women of the Bible.
+                To bring women into God's light through teaching and being. We offer seminars centered on God's word that support real-world examples of how the Bible meets everyday challenges — finances, time management, counseling, managing home and life, and exploring the women of the Bible.
               </p>
             </div>
             <div>
               <Eyebrow>Our name</Eyebrow>
               <p className="mt-6 text-base leading-relaxed text-muted-foreground">
-                He allows the fire of affliction, persecution and life events
-                arriving all at once to transform us. What is formed is not
-                damage — it is a pearl.
+                He allows the fire of affliction, persecution and life events arriving all at once to transform us. What is formed is not damage — it is a pearl.
                 <span className="mt-3 block text-[0.7rem] font-semibold uppercase tracking-[0.24em] text-gold">
                   Zechariah 13:9
                 </span>
@@ -101,12 +111,10 @@ export function About() {
               Sharonda Savoy
             </h2>
             <p className="mt-8 text-base leading-relaxed text-muted-foreground">
-              Founder of Cultured Pearl. What began in 2017 as a conviction that
-              women deserve support has grown into seminars, scholarships and a
-              community that keeps showing up for one another.
+              Founder of Cultured Pearl. What began in 2017 as a conviction that women deserve support has grown into seminars, scholarships and a community that keeps showing up for one another.
             </p>
             <div className="mt-10">
-              <Button href="mailto:sharondasavoy@culturedpearl.org" variant="outline">
+              <Button href={`mailto:${settings.email || 'info@culturedpearl.org'}`} variant="outline">
                 Contact the board
               </Button>
             </div>

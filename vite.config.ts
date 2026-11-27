@@ -28,7 +28,16 @@ export default defineConfig({
           'react-router-dom': 'https://esm.sh/react-router-dom@6.28.0?external=react,react-dom',
         },
         manualChunks: (id) => {
-          if (id.includes('/data/eventsData') || id.includes('/data/teamData') || id.includes('/data/storeAndBlogData') || id.includes('/constants/images')) {
+          if (id.includes('lucide-react')) {
+            return 'icons';
+          }
+          if (id.includes('tailwind-merge') || id.includes('clsx')) {
+            return 'ui-utils';
+          }
+          if (id.includes('/constants/images')) {
+            return 'images-catalog';
+          }
+          if (id.includes('/data/')) {
             return 'data-catalog';
           }
           if (id.includes('/pages/Events') || id.includes('/pages/EventDetail')) {
@@ -43,7 +52,10 @@ export default defineConfig({
           if (id.includes('/pages/Give') || id.includes('/pages/Sisterhood') || id.includes('/pages/NotFound')) {
             return 'community-bundle';
           }
-          if (id.includes('/pages/Home') || id.includes('/pages/About')) {
+          if (id.includes('/pages/About')) {
+            return 'about-bundle';
+          }
+          if (id.includes('/pages/Home')) {
             return 'home-bundle';
           }
         },

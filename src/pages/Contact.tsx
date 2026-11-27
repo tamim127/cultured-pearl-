@@ -1,24 +1,63 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { PageHeader } from '../components/PageHeader';
 import { Section } from '../components/Section';
 import { Eyebrow } from '../components/Eyebrow';
 import { Button } from '../components/Button';
+import { submitContactToWix, fetchPageContent, useWixLiveRefresh, GenericPageContent } from '../services/wixClient';
 
 export function Contact() {
-  const [formData, setFormData] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
-  const [sent, setSent] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    message: '',
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [pageData, setPageData] = useState<GenericPageContent>({
+    eyebrow: 'Connect With Us',
+    pageTitle: 'Contact Cultured Pearl',
+    description: 'Get in touch with Cultured Pearl to learn more about our work and how you can get involved with our nonprofit organization.',
+    email: 'info@culturedpearl.org',
+    phone: '(202) 555-0199',
+    address: 'Washington, DC Metropolitan Area',
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const loadContact = useCallback(() => {
+    fetchPageContent('ContactPage', pageData).then(setPageData);
+  }, []);
+
+  useEffect(() => {
+    loadContact();
+  }, [loadContact]);
+
+  useWixLiveRefresh(loadContact);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSent(true);
+    setSubmitting(true);
+    setStatusMessage(null);
+
+    const res = await submitContactToWix({
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      phone: formData.phone,
+      message: formData.message,
+    });
+
+    setSubmitting(false);
+    setStatusMessage(res.message);
+    setFormData({ firstName: '', lastName: '', email: '', phone: '', message: '' });
   };
 
   return (
     <div>
       <PageHeader
-        eyebrow="Connect With Us"
-        title="Contact Cultured Pearl"
-        subtitle="Get in touch with Cultured Pearl to learn more about our work and how you can get involved with our nonprofit organization."
+        eyebrow={pageData.eyebrow || 'Connect With Us'}
+        title={pageData.pageTitle || 'Contact Cultured Pearl'}
+        subtitle={pageData.description}
       />
 
       <Section tone="pearl">
@@ -42,10 +81,10 @@ export function Contact() {
                 <div>
                   <span className="text-xs uppercase tracking-wider text-espresso/60 font-bold block">Email</span>
                   <a
-                    href="mailto:sharondasavoy@culturedpearl.org"
+                    href={`mailto:${pageData.email || 'info@culturedpearl.org'}`}
                     className="font-serif text-lg text-espresso hover:text-gold transition font-bold"
                   >
-                    sharondasavoy@culturedpearl.org
+                    {pageData.email || 'info@culturedpearl.org'}
                   </a>
                 </div>
               </div>
@@ -56,7 +95,7 @@ export function Contact() {
                 </div>
                 <div>
                   <span className="text-xs uppercase tracking-wider text-espresso/60 font-bold block">Location</span>
-                  <p className="text-espresso font-medium">Washington, DC Metropolitan Area</p>
+                  <p className="text-espresso font-medium">{pageData.address || 'Washington, DC Metropolitan Area'}</p>
                 </div>
               </div>
 
@@ -66,7 +105,7 @@ export function Contact() {
                 </div>
                 <div>
                   <span className="text-xs uppercase tracking-wider text-espresso/60 font-bold block">Tax-Exempt Status</span>
-                  <p className="text-espresso font-medium">501(c)(3) NonProfit Organization</p>
+                  <p className="text-espresso font-medium">501(c)(3) Nonprofit Organization</p>
                 </div>
               </div>
             </div>
@@ -74,31 +113,52 @@ export function Contact() {
 
           {/* Form Side */}
           <div className="bg-sand/30 p-8 rounded-2xl border border-sand">
-            {sent ? (
+            {statusMessage ? (
               <div className="text-center py-12">
                 <span className="text-4xl text-gold block mb-3">✓</span>
                 <h3 className="font-serif text-2xl text-espresso font-bold">Message Sent!</h3>
-                <p className="text-sm font-sans text-espresso/70 mt-2">
-                  Thank you for reaching out. A member of our team will respond to your message promptly.
+                <p className="text-sm font-sans text-espresso/70 mt-2 max-w-md mx-auto">
+                  {statusMessage}
                 </p>
+                <button
+                  onClick={() => setStatusMessage(null)}
+                  className="mt-6 px-6 py-2.5 rounded-full bg-espresso text-pearl text-xs uppercase tracking-wider font-bold hover:bg-gold transition"
+                >
+                  Send Another Message
+                </button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4 font-sans text-sm">
-                <div>
-                  <label className="block text-xs uppercase tracking-wider text-espresso/80 font-bold mb-1">
-                    Your Full Name *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-lg border border-sand bg-pearl focus:outline-none focus:ring-2 focus:ring-gold"
-                    placeholder="Jane Doe"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs uppercase tracking-wider text-espresso/80 font-bold mb-1">
+                      First Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.firstName}
+                      onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-lg border border-sand bg-pearl focus:outline-none focus:ring-2 focus:ring-gold"
+                      placeholder="Jane"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs uppercase tracking-wider text-espresso/80 font-bold mb-1">
+                      Last Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.lastName}
+                      onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-lg border border-sand bg-pearl focus:outline-none focus:ring-2 focus:ring-gold"
+                      placeholder="Doe"
+                    />
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs uppercase tracking-wider text-espresso/80 font-bold mb-1">
                       Email Address *
@@ -114,7 +174,7 @@ export function Contact() {
                   </div>
                   <div>
                     <label className="block text-xs uppercase tracking-wider text-espresso/80 font-bold mb-1">
-                      Phone Number
+                      Phone Number (Optional)
                     </label>
                     <input
                       type="tel"
@@ -128,41 +188,26 @@ export function Contact() {
 
                 <div>
                   <label className="block text-xs uppercase tracking-wider text-espresso/80 font-bold mb-1">
-                    Subject
-                  </label>
-                  <select
-                    value={formData.subject}
-                    onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-lg border border-sand bg-pearl focus:outline-none focus:ring-2 focus:ring-gold"
-                  >
-                    <option value="">Select a Topic</option>
-                    <option value="General Inquiry">General Inquiry</option>
-                    <option value="Debutante Program">Debutante Program</option>
-                    <option value="Purposeful Life Scholarship">Purposeful Life Scholarship</option>
-                    <option value="Volunteering / Partnership">Volunteering / Partnership</option>
-                    <option value="Prayer Request">Prayer Request</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs uppercase tracking-wider text-espresso/80 font-bold mb-1">
-                    Your Message *
+                    Your Message / Prayer Request *
                   </label>
                   <textarea
-                    rows={4}
                     required
+                    rows={5}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     className="w-full px-4 py-2.5 rounded-lg border border-sand bg-pearl focus:outline-none focus:ring-2 focus:ring-gold"
-                    placeholder="How can we assist you today?"
+                    placeholder="How can we stand in agreement with you or walk beside you?"
                   />
                 </div>
 
-                <div className="pt-2">
-                  <Button type="submit" variant="primary" className="w-full">
-                    Send Message
-                  </Button>
-                </div>
+                <Button
+                  type="submit"
+                  variant="primary"
+                  className="w-full mt-2"
+                  disabled={submitting}
+                >
+                  {submitting ? 'Submitting to Wix CRM...' : 'Send Message'}
+                </Button>
               </form>
             )}
           </div>

@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { PageHeader } from '../components/PageHeader';
 import { Section } from '../components/Section';
 import { Eyebrow } from '../components/Eyebrow';
 import { Button } from '../components/Button';
 import { IMAGES } from '../constants/images';
+import { submitContactToWix, fetchPageContent, useWixLiveRefresh, GenericPageContent } from '../services/wixClient';
 
 export function Debutante() {
   const [formData, setFormData] = useState({
@@ -16,18 +17,46 @@ export function Debutante() {
     interests: '',
   });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [pageData, setPageData] = useState<GenericPageContent>({
+    eyebrow: 'Signature Program',
+    pageTitle: 'Cultured Pearl Debutante Ball',
+    description: 'Step into elegance, grace, and empowerment — celebrating young women as they blossom into leaders of faith, poise, and purpose.',
+    ageRange: 'Young ladies ages 14-18 (Grades 9-12)',
+    programDates: 'Annual Cohort runs October through April culminating in the Debutante Ball',
+    curriculum: 'Biblical Womanhood, Financial Literacy, College Readiness, Professional Etiquette, Community Service & Arts Appreciation',
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const loadDebutante = useCallback(() => {
+    fetchPageContent('DebutantePage', pageData).then(setPageData);
+  }, []);
+
+  useEffect(() => {
+    loadDebutante();
+  }, [loadDebutante]);
+
+  useWixLiveRefresh(loadDebutante);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitting(true);
+    await submitContactToWix({
+      firstName: formData.candidateName,
+      lastName: `(Parent: ${formData.parentName || 'N/A'})`,
+      email: formData.email,
+      phone: formData.phone,
+      message: `Debutante Ball Registration - School: ${formData.school}, Grade: ${formData.grade}, Interests: ${formData.interests}`,
+    });
+    setSubmitting(false);
     setSubmitted(true);
   };
 
   return (
     <div>
       <PageHeader
-        eyebrow="Signature Program"
-        title="Cultured Pearl Debutante Ball"
-        subtitle="Step into elegance, grace, and empowerment — celebrating young women as they blossom into leaders of faith, poise, and purpose."
+        eyebrow={pageData.eyebrow || 'Signature Program'}
+        title={pageData.pageTitle || 'Cultured Pearl Debutante Ball'}
+        subtitle={pageData.description}
         image={IMAGES.debutanteHero}
       />
 
@@ -157,10 +186,11 @@ export function Debutante() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs uppercase tracking-wider text-espresso/80 font-bold mb-1">
-                    Current High School
+                    Current School *
                   </label>
                   <input
                     type="text"
+                    required
                     value={formData.school}
                     onChange={(e) => setFormData({ ...formData, school: e.target.value })}
                     className="w-full px-4 py-2.5 rounded-lg border border-sand bg-pearl focus:outline-none focus:ring-2 focus:ring-gold"
@@ -169,40 +199,40 @@ export function Debutante() {
                 </div>
                 <div>
                   <label className="block text-xs uppercase tracking-wider text-espresso/80 font-bold mb-1">
-                    Grade Level
+                    Grade Level (Fall 2026/2027) *
                   </label>
-                  <select
+                  <input
+                    type="text"
+                    required
                     value={formData.grade}
                     onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
                     className="w-full px-4 py-2.5 rounded-lg border border-sand bg-pearl focus:outline-none focus:ring-2 focus:ring-gold"
-                  >
-                    <option value="">Select Grade</option>
-                    <option value="9th">Freshman (9th)</option>
-                    <option value="10th">Sophomore (10th)</option>
-                    <option value="11th">Junior (11th)</option>
-                    <option value="12th">Senior (12th)</option>
-                  </select>
+                    placeholder="e.g. 10th, 11th, 12th"
+                  />
                 </div>
               </div>
 
               <div>
                 <label className="block text-xs uppercase tracking-wider text-espresso/80 font-bold mb-1">
-                  Tell Us About Your Goals & Hobbies
+                  Extracurricular Activities & Interests
                 </label>
                 <textarea
                   rows={3}
                   value={formData.interests}
                   onChange={(e) => setFormData({ ...formData, interests: e.target.value })}
                   className="w-full px-4 py-2.5 rounded-lg border border-sand bg-pearl focus:outline-none focus:ring-2 focus:ring-gold"
-                  placeholder="Share what inspires you and why you'd like to be a Cultured Pearl debutante..."
+                  placeholder="Tell us about your passions, community service, or aspirations..."
                 />
               </div>
 
-              <div className="pt-4 text-center">
-                <Button type="submit" variant="primary" className="w-full md:w-auto px-8">
-                  Submit Debutante Registration
-                </Button>
-              </div>
+              <Button
+                type="submit"
+                variant="primary"
+                className="w-full mt-4"
+                disabled={submitting}
+              >
+                {submitting ? 'Submitting Application...' : 'Submit Debutante Application'}
+              </Button>
             </form>
           )}
         </div>

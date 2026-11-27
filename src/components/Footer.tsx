@@ -1,8 +1,38 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { IMAGES } from '../constants/images';
+import {
+  fetchFooterContent,
+  fetchHeaderContent,
+  useWixLiveRefresh,
+  FooterContent,
+} from '../services/wixClient';
 
 export function Footer() {
+  const [logoUrl, setLogoUrl] = useState<string>(IMAGES.logo);
+  const [content, setContent] = useState<FooterContent>({
+    title: 'Main Footer',
+    brandText: "Bringing women into God's light. Empowering through sisterhood, faith, higher education scholarships, and community service.",
+    scriptureVerse: '“And I will put this third into the fire, and refine them as one refines silver, and test them as gold is tested.” — Zechariah 13:9',
+    copyrightText: '© 2026 Cultured Pearl. A 501(c)(3) nonprofit organization. All rights reserved.',
+    contactEmail: 'info@culturedpearl.org',
+    contactPhone: '(202) 555-0199',
+    address: 'Washington, DC Metropolitan Area',
+  });
+
+  const loadFooter = useCallback(() => {
+    fetchFooterContent().then(setContent);
+    fetchHeaderContent().then((hc) => {
+      if (hc.logoUrl) setLogoUrl(hc.logoUrl);
+    });
+  }, []);
+
+  useEffect(() => {
+    loadFooter();
+  }, [loadFooter]);
+
+  useWixLiveRefresh(loadFooter);
+
   return (
     <footer className="bg-espresso text-pearl border-t border-gold/30">
       <div className="max-w-7xl mx-auto px-6 py-16">
@@ -11,16 +41,16 @@ export function Footer() {
           <div className="lg:col-span-2 space-y-4">
             <Link to="/" className="inline-block bg-pearl/10 p-2 rounded-xl backdrop-blur-sm hover:bg-pearl/15 transition-colors">
               <img
-                src={IMAGES.logo}
+                src={logoUrl}
                 alt="Cultured Pearl"
                 className="h-14 w-auto object-contain brightness-110"
               />
             </Link>
             <p className="text-pearl/70 text-sm font-sans leading-relaxed max-w-sm">
-              Bringing women into God's light. Empowering through sisterhood, faith, higher education scholarships, and community service.
+              {content.brandText}
             </p>
             <p className="font-serif italic text-sm text-gold-soft">
-              &ldquo;And I will put this third into the fire, and refine them as one refines silver, and test them as gold is tested.&rdquo; — Zechariah 13:9
+              {content.scriptureVerse}
             </p>
           </div>
 
@@ -112,17 +142,22 @@ export function Footer() {
             <div className="mt-6 pt-4 border-t border-pearl/10 text-xs text-pearl/60">
               <p>Email:</p>
               <a
-                href="mailto:sharondasavoy@culturedpearl.org"
+                href={`mailto:${content.contactEmail || 'info@culturedpearl.org'}`}
                 className="text-gold hover:underline font-mono text-[11px]"
               >
-                sharondasavoy@culturedpearl.org
+                {content.contactEmail || 'info@culturedpearl.org'}
               </a>
+              {content.contactPhone && (
+                <p className="mt-1 font-mono text-[11px] text-pearl/50">
+                  Phone: {content.contactPhone}
+                </p>
+              )}
             </div>
           </div>
         </div>
 
         <div className="mt-12 pt-8 border-t border-pearl/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-sans text-pearl/50">
-          <p>© {new Date().getFullYear()} Cultured Pearl. A 501(c)(3) nonprofit organization. All rights reserved.</p>
+          <p>{content.copyrightText || `© ${new Date().getFullYear()} Cultured Pearl. A 501(c)(3) nonprofit organization. All rights reserved.`}</p>
           <div className="flex gap-6">
             <Link to="/about" className="hover:text-gold">Mission</Link>
             <Link to="/give" className="hover:text-gold">Tax Exemption</Link>

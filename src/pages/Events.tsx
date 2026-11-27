@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { PageHeader } from '../components/PageHeader';
 import { Section } from '../components/Section';
-import { Eyebrow } from '../components/Eyebrow';
 import { Button } from '../components/Button';
 import { getWixEvents } from '../services/wixEvents';
+import { fetchPageContent, useWixLiveRefresh, GenericPageContent } from '../services/wixClient';
 import { LiveEvent } from '../data/eventsData';
 
 type FilterTab = 'all' | 'upcoming' | 'gathering' | 'community' | 'seminar';
@@ -14,13 +14,25 @@ export function Events() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<FilterTab>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [pageData, setPageData] = useState<GenericPageContent>({
+    eyebrow: 'Community & Gatherings',
+    pageTitle: 'Events & Seminars',
+    description: "Bringing women into God's light through uplifting fellowship, spiritual devotionals, and transformative community outreach.",
+  });
 
-  useEffect(() => {
+  const loadEvents = useCallback(() => {
+    fetchPageContent('EventsPage', pageData).then(setPageData);
     getWixEvents().then((data) => {
       setEvents(data);
       setLoading(false);
     });
   }, []);
+
+  useEffect(() => {
+    loadEvents();
+  }, [loadEvents]);
+
+  useWixLiveRefresh(loadEvents);
 
   const filteredEvents = events.filter((e) => {
     const matchesTab = activeTab === 'all' || e.category === activeTab;
@@ -34,9 +46,9 @@ export function Events() {
   return (
     <div>
       <PageHeader
-        eyebrow="Community & Gatherings"
-        title="Events & Seminars"
-        subtitle="Bringing women into God's light through uplifting fellowship, spiritual devotionals, and transformative community outreach."
+        eyebrow={pageData.eyebrow || 'Community & Gatherings'}
+        title={pageData.pageTitle || 'Events & Seminars'}
+        subtitle={pageData.description}
       />
 
       <Section tone="pearl">
