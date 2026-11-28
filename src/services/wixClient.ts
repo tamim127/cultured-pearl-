@@ -701,7 +701,7 @@ export async function fetchWixEvents(): Promise<LiveEvent[]> {
       method: 'POST',
       body: JSON.stringify({
         query: {
-          paging: { limit: 30 },
+          paging: { limit: 50 },
           sort: [{ fieldName: 'createdDate', order: 'DESC' }],
         },
       }),
@@ -710,10 +710,54 @@ export async function fetchWixEvents(): Promise<LiveEvent[]> {
     if (res.ok) {
       const data = await res.json();
       if (Array.isArray(data.events) && data.events.length > 0) {
-        return data.events.map((e: any) => {
+        const now = new Date();
+        const mapped: LiveEvent[] = data.events.map((e: any) => {
           const startDate = e.dateAndTimeSettings?.startDate
             ? new Date(e.dateAndTimeSettings.startDate)
             : null;
+          const endDate = e.dateAndTimeSettings?.endDate
+            ? new Date(e.dateAndTimeSettings.endDate)
+            : startDate;
+
+          const isPast =
+            e.status === 'ENDED' ||
+            (endDate ? endDate < now : false);
+
+          const regStatus = e.registration?.status;
+          const regType = e.registration?.type || 'RSVP';
+          const isClosed =
+            isPast ||
+            regStatus === 'CLOSED' ||
+            regStatus === 'CLOSED_AUTOMATICALLY' ||
+            e.registration?.registrationDisabled === true;
+
+          const isOpenForRsvp = !isClosed && regStatus === 'OPEN_RSVP';
+          const isOpenForTickets =
+            !isClosed && (regStatus === 'OPEN_TICKETS' || regType === 'TICKETS');
+
+          const eventPageUrl =
+            e.eventPageUrl?.base && e.eventPageUrl?.path
+              ? `${e.eventPageUrl.base}${e.eventPageUrl.path}`
+              : undefined;
+
+          let defaultBanner =
+            'https://static.wixstatic.com/media/81bfa3_a8ad7faef04a4e81a69d34142fa9408a~mv2.jpg';
+          const lowerTitle = (e.title || '').toLowerCase();
+          if (
+            lowerTitle.includes('shoe') ||
+            lowerTitle.includes('drive') ||
+            lowerTitle.includes('outreach')
+          ) {
+            defaultBanner =
+              'https://static.wixstatic.com/media/81bfa3_6a9556768b3f4aaebf3f9ad2b73ba8ef~mv2.jpg';
+          } else if (lowerTitle.includes('debutante')) {
+            defaultBanner =
+              'https://static.wixstatic.com/media/b3742cb94ad46fc6d9639d2496e849df.jpg';
+          } else if (lowerTitle.includes('gala') || lowerTitle.includes('excellence')) {
+            defaultBanner =
+              'https://static.wixstatic.com/media/81bfa3_a8ad7faef04a4e81a69d34142fa9408a~mv2.jpg';
+          }
+
           return {
             id: e.id,
             slug: e.slug || e.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
@@ -736,18 +780,58 @@ export async function fetchWixEvents(): Promise<LiveEvent[]> {
                   })
                 : 'Time TBA'),
             location: e.location?.name || 'Washington, DC Metropolitan Area',
-            category: e.status === 'ENDED' ? 'gathering' : 'upcoming',
+            locationAddress: e.location?.address?.formatted || e.location?.name || '',
+            category: isPast ? 'gathering' : 'upcoming',
             description:
               e.shortDescription ||
               'Join Cultured Pearl for this signature uplifting gathering.',
             longDescription: stripHtml(e.detailedDescription) || undefined,
-            banner: resolveWixMediaUrl(
-              e.mainImage,
-              'https://static.wixstatic.com/media/27ab9a_343302a99b954cd58cfc204e62d79d9af002.jpg'
-            ),
-            status: e.status === 'ENDED' ? 'Past' : 'Open',
+            banner: resolveWixMediaUrl(e.mainImage, defaultBanner),
+            status: isClosed ? 'Past' : 'Open',
             featured: true,
+            registrationType: regType,
+            registrationStatus: regStatus,
+            isPast,
+            isClosed,
+            isOpenForRsvp,
+            isOpenForTickets,
+            startDateIso: e.dateAndTimeSettings?.startDate,
+            endDateIso: e.dateAndTimeSettings?.endDate,
+            timeZone: e.dateAndTimeSettings?.timeZoneId || 'America/New_York',
+            eventPageUrl,
           };
+        });
+
+        // Merge verified live event definitions from LIVE_EVENTS
+        const enriched = mapped.map((m) => {
+          const liveRef = LIVE_EVENTS.find(
+            (e) => e.slug === m.slug || e.id === m.id
+          );
+          if (liveRef) {
+            return {
+              ...m,
+              ...(liveRef.guestsCount ? { guestsCount: liveRef.guestsCount } : {}),
+              ...(liveRef.banner ? { banner: liveRef.banner } : {}),
+              ...(liveRef.longDescription ? { longDescription: liveRef.longDescription } : {}),
+            };
+          }
+          return m;
+        });
+
+        // Ensure Community Day and other active events are present
+        LIVE_EVENTS.forEach((le) => {
+          if (!le.isPast && !enriched.some((m) => m.slug === le.slug)) {
+            enriched.push(le);
+          }
+        });
+
+        // Sort: upcoming open events first, followed by past/closed events
+        return enriched.sort((a, b) => {
+          if (!a.isPast && b.isPast) return -1;
+          if (a.isPast && !b.isPast) return 1;
+          const timeA = a.startDateIso ? new Date(a.startDateIso).getTime() : 0;
+          const timeB = b.startDateIso ? new Date(b.startDateIso).getTime() : 0;
+          return a.isPast ? timeB - timeA : timeA - timeB;
         });
       }
     }

@@ -13,6 +13,10 @@ async function main() {
     throw new Error('❌ Build directory `dist` does not exist!');
   }
 
+  // Ensure SPA fallback files exist for static host routing
+  fs.copyFileSync(path.join(DIST_DIR, 'index.html'), path.join(DIST_DIR, '404.html'));
+  fs.copyFileSync(path.join(DIST_DIR, 'index.html'), path.join(DIST_DIR, 'event-confirmation.html'));
+
   console.log('🔑 [2/3] Authenticating with Wix CLI...');
   let token = process.env.WIX_ACCESS_TOKEN;
   if (!token) {

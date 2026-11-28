@@ -5,6 +5,7 @@ export interface LiveEvent {
   dateStr: string;
   timeStr: string;
   location: string;
+  locationAddress?: string;
   category: 'upcoming' | 'gathering' | 'community' | 'seminar';
   description: string;
   longDescription?: string;
@@ -12,9 +13,92 @@ export interface LiveEvent {
   rsvpUrl?: string;
   status: 'Open' | 'Past' | 'Invite Only';
   featured?: boolean;
+  // Native Wix Events properties
+  registrationType?: 'RSVP' | 'TICKETS' | 'EXTERNAL' | 'NONE' | string;
+  registrationStatus?: 'OPEN_RSVP' | 'OPEN_TICKETS' | 'CLOSED' | 'CLOSED_AUTOMATICALLY' | string;
+  isPast?: boolean;
+  isClosed?: boolean;
+  isOpenForRsvp?: boolean;
+  isOpenForTickets?: boolean;
+  startDateIso?: string;
+  endDateIso?: string;
+  timeZone?: string;
+  eventPageUrl?: string;
+  guestsCount?: number;
 }
 
 export const LIVE_EVENTS: LiveEvent[] = [
+  {
+    id: 'dd9df97a-a275-408e-8be4-81355752ba1a',
+    slug: 'pearls-of-excellence-honoring-women-of-faith-purpose-impact',
+    title: 'Pearls of Excellence: Honoring Women of Faith, Purpose & Impact',
+    dateStr: 'August 13, 2027',
+    timeStr: '6:00 PM – 10:00 PM',
+    location: 'Location is TBD',
+    category: 'upcoming',
+    description:
+      'Join Cultured Pearl for Pearls of Excellence: Honoring Women of Faith, Purpose & Impact—an inspiring evening celebrating women whose leadership, service, and commitment make a difference in their communities.',
+    longDescription:
+      "Join Cultured Pearl for Pearls of Excellence: Honoring Women of Faith, Purpose & Impact—an inspiring evening celebrating women whose leadership, service, and commitment make a difference in their communities.\n\nTogether, we'll recognize their contributions and support Cultured Pearl's mission to empower women and youth through scholarships, mentorship, and community programs. Enjoy an evening of celebration, connection, and purpose as we honor the women making an impact today and helping shape a brighter future.",
+    banner: 'https://static.wixstatic.com/media/27ab9a_962a97f14def482c8357d92677e68655~mv2.png',
+    status: 'Open',
+    featured: true,
+    registrationType: 'TICKETS',
+    registrationStatus: 'OPEN_TICKETS',
+    isPast: false,
+    isClosed: false,
+    isOpenForTickets: true,
+    startDateIso: '2027-08-13T22:00:00.000Z',
+    eventPageUrl:
+      '/events/pearls-of-excellence-honoring-women-of-faith-purpose-impact',
+  },
+  {
+    id: '442756ff-44db-415a-a6fa-123dade99e64',
+    slug: 'community-day',
+    title: 'Community Day',
+    dateStr: 'March 6, 2027',
+    timeStr: '11:00 AM – 3:00 PM',
+    location: 'Location is TBD',
+    category: 'community',
+    description:
+      'Join us for scholarship application assistance, secure document shredding to prepare for tax season, and helpful budgeting and financial-wellness resources—all in a welcoming, uplifting environment.',
+    longDescription:
+      'Cultured Pearl Community Day brings our neighborhood together with practical resources, higher education scholarship application mentoring, secure document shredding, and faith-filled fellowship.',
+    banner: 'https://static.wixstatic.com/media/27ab9a_44872b3ce7524d0ead186d30e08f775b~mv2.png',
+    status: 'Open',
+    featured: true,
+    registrationType: 'RSVP',
+    registrationStatus: 'OPEN_RSVP',
+    isPast: false,
+    isClosed: false,
+    isOpenForRsvp: true,
+    startDateIso: '2027-03-06T16:00:00.000Z',
+    eventPageUrl: '/events/community-day',
+  },
+  {
+    id: 'ce9f7432-2ea8-46b3-970b-891c88fadab0',
+    slug: 'pearls-of-excellence-gala-scholarship-awards-2027',
+    title: 'Pearls of Excellence Gala & Scholarship Awards 2027',
+    dateStr: 'May 15, 2027',
+    timeStr: '2:00 PM – 6:00 PM',
+    location: 'The Ritz-Carlton, Pentagon City',
+    category: 'gathering',
+    description:
+      'Join Cultured Pearl for an unforgettable evening celebrating our Purposeful Life Scholarship recipients and honoring women of faith, purpose, and community impact.',
+    longDescription:
+      'An elegant gala celebration honoring outstanding community pillars, educators, and spiritual leaders who uplift others. Includes a three-course dinner, inspiring keynote addresses, and scholarship celebrations.',
+    banner: 'https://static.wixstatic.com/media/81bfa3_a8ad7faef04a4e81a69d34142fa9408a~mv2.jpg',
+    status: 'Open',
+    featured: true,
+    registrationType: 'RSVP',
+    registrationStatus: 'OPEN_RSVP',
+    isPast: false,
+    isClosed: false,
+    isOpenForRsvp: true,
+    startDateIso: '2027-05-15T18:00:00.000Z',
+    eventPageUrl:
+      '/events/pearls-of-excellence-gala-scholarship-awards-2027',
+  },
   {
     id: 'debutante-ball-signup',
     slug: 'cultured-pearl-debutante-ball-signup',
@@ -23,75 +107,92 @@ export const LIVE_EVENTS: LiveEvent[] = [
     timeStr: 'Registration Open',
     location: 'Washington, DC Metropolitan Area',
     category: 'upcoming',
-    description: 'Step into elegance, grace and empowerment! We invite young women to participate in our upcoming Debutante Ball, a celebration of love, culture, achievement, and sisterhood.',
-    longDescription: 'Cultured Pearl is thrilled to invite ambitious young women to embark on a transformative season of mentorship, etiquette, community stewardship, and poise culminating in the formal Debutante Ball. Participants engage in workshops, scholarship opportunities, and life-long sisterhood connections.',
+    description:
+      'Step into elegance, grace and empowerment! We invite young women to participate in our upcoming Debutante Ball, a celebration of love, culture, achievement, and sisterhood.',
+    longDescription:
+      'Cultured Pearl is thrilled to invite ambitious young women to embark on a transformative season of mentorship, etiquette, community stewardship, and poise culminating in the formal Debutante Ball. Participants engage in workshops, scholarship opportunities, and life-long sisterhood connections.',
     banner: 'https://static.wixstatic.com/media/b3742cb94ad46fc6d9639d2496e849df.jpg',
     status: 'Open',
-    featured: true
+    featured: true,
+    registrationType: 'RSVP',
+    registrationStatus: 'OPEN_RSVP',
+    isPast: false,
+    isClosed: false,
+    isOpenForRsvp: true,
   },
   {
-    id: 'pearls-of-excellence',
-    slug: 'pearls-of-excellence-honoring-women-of-faith-purpose-impact',
-    title: 'Pearls of Excellence: Honoring Women of Faith, Purpose & Impact',
-    dateStr: 'Fall Gala Gathering',
-    timeStr: '6:00 PM - 10:00 PM EST',
-    location: 'Grand Ballroom, Washington DC',
-    category: 'upcoming',
-    description: 'Join Cultured Pearl for Pearls of Excellence, honoring remarkable women who embody steadfast faith, leadership, and uplifting community transformation.',
-    longDescription: 'An elegant gala evening honoring outstanding community pillars, educators, and spiritual leaders who uplift others. Includes a three-course dinner, inspiring keynote addresses, and scholarship celebrations.',
-    banner: 'https://static.wixstatic.com/media/27ab9a_343302a99b954cd58cfc204e62d79d9af002.jpg',
-    status: 'Open',
-    featured: true
+    id: '64d36fbc-2c3c-458f-93eb-edffe6ffbca5',
+    slug: 'pearls-of-excellence-gala-scholarship-awards-2026',
+    title: 'Pearls of Excellence Gala & Scholarship Awards 2026',
+    dateStr: 'October 24, 2026',
+    timeStr: '2:00 PM – 6:00 PM',
+    location: 'The Ritz-Carlton, Pentagon City',
+    category: 'gathering',
+    description:
+      'A memorable gathering celebrating women of faith and awarding our annual Purposeful Life Scholarships.',
+    banner: 'https://static.wixstatic.com/media/81bfa3_a8ad7faef04a4e81a69d34142fa9408a~mv2.jpg',
+    status: 'Past',
+    isPast: true,
+    isClosed: true,
+    registrationType: 'RSVP',
+    registrationStatus: 'CLOSED_AUTOMATICALLY',
   },
   {
-    id: 'shoes-drive-2026',
-    slug: 'donate-gently-used-shoes-until-september-15-2026',
+    id: '87aa01f0-1815-4965-a819-474fb8d4c3ce',
+    slug: 'community-shoe-drive-support-families-in-need',
     title: 'Community Shoe Drive: Support Families in Need',
-    dateStr: 'Ongoing Until Sept 15',
-    timeStr: 'All Day Drop-off',
+    dateStr: 'September 15, 2026',
+    timeStr: '5:00 AM – 1:00 PM',
     location: 'Cultured Pearl Outreach Centers',
     category: 'community',
-    description: 'Donate gently used shoes to support homeless individuals and disadvantaged families transitioning back into stable housing and employment.',
-    longDescription: 'In partnership with local shelters and community pantries, our shoe drive gathers gently worn shoes for men, women, and children. Every pair provides dignity, safety, and comfort.',
+    description:
+      'Community outreach gathering gently used shoes to empower homeless families and individuals transitioning back to work.',
     banner: 'https://static.wixstatic.com/media/81bfa3_6a9556768b3f4aaebf3f9ad2b73ba8ef~mv2.jpg',
-    status: 'Open',
-    featured: true
+    status: 'Past',
+    isPast: true,
+    isClosed: true,
+    registrationType: 'RSVP',
+    registrationStatus: 'CLOSED_AUTOMATICALLY',
   },
   {
-    id: 'cleanse-your-mind',
-    slug: 'cleanse-your-mind-gurl-they-aint-got-nothing-on-you',
-    title: "Cleanse Your Mind Gurl, They Ain't Got Nothing On You!",
-    dateStr: 'Spring Mental Wellness',
-    timeStr: '11:00 AM - 2:00 PM EST',
-    location: 'Cultured Pearl Virtual Sanctuary & In-Person',
-    category: 'seminar',
-    description: 'A Mental Cleansing Seminar filled with love, laughter, healing, and biblical guidance on overcoming anxiety, self-doubt, and spiritual fatigue.',
-    banner: 'https://static.wixstatic.com/media/27ab9a_d9f77a5393984caba4db1f15a11fbf10f002.jpg',
-    status: 'Past'
-  },
-  {
-    id: 'night-of-the-cultured-pearl',
-    slug: 'night-of-the-cultured-pearl',
-    title: 'Night of the Cultured Pearl: Annual Masquerade Gala',
-    dateStr: 'Annual Benefit Evening',
-    timeStr: '7:00 PM - 11:00 PM EST',
-    location: 'Historic Venue, Washington DC',
+    id: 'be57da69-58d7-4d43-a79d-b44ced80c6e2',
+    slug: 'cultured-pearl-debutante-ball',
+    title: 'Cultured Pearl Debutante Ball',
+    dateStr: 'November 21, 2026',
+    timeStr: '1:00 PM – 6:00 PM',
+    location: 'Washington, DC Metropolitan Area',
     category: 'gathering',
-    description: 'Cultured Pearl Annual Fundraiser Masquerade Ball raising funds for the Purposeful Life Scholarship and homeless outreach initiatives.',
-    banner: 'https://static.wixstatic.com/media/27ab9a_b2524b890b8246edbae0151c82289d19f002.jpg',
-    status: 'Past'
+    description:
+      'Annual formal Debutante Ball celebrating poise, mentorship, and academic achievement for young women.',
+    banner: 'https://static.wixstatic.com/media/b3742cb94ad46fc6d9639d2496e849df.jpg',
+    status: 'Past',
+    isPast: true,
+    isClosed: true,
+    registrationType: 'RSVP',
+    registrationStatus: 'CLOSED_AUTOMATICALLY',
   },
   {
-    id: 'kingsdaughters',
+    id: 'ccd2f19e-ebe7-44f1-821a-2399826447c2',
     slug: 'kingsdaughters',
-    title: 'Daughters of the King: Spiritual Empowerment',
-    dateStr: 'Quarterly Gathering',
-    timeStr: '10:00 AM - 1:00 PM EST',
-    location: 'Vermont Avenue Baptist Church Fellowship Hall',
+    title: 'KingsDaughters',
+    dateStr: 'October 16 – 18, 2026',
+    timeStr: '4:00 PM – 2:00 PM',
+    location: 'Ocean City, MD, USA',
+    locationAddress: 'Ocean City, Ocean City, MD, USA',
     category: 'gathering',
-    description: 'Rooted in Zechariah 13:9 and Proverbs 31, bringing women together into God’s glorious light to celebrate identity as daughters of the Almighty.',
-    banner: 'https://static.wixstatic.com/media/81bfa3_a8ad7faef04a4e81a69d34142fa9408a~mv2.jpg',
-    status: 'Open'
+    description:
+      "Join us for the Daughters of the King Christian Women's Retreat, October 16–18, 2026, in Ocean City, Maryland. Experience a transformative weekend of worship, prayer, healing, and sisterhood centered on the theme Release • Heal • Renew. Your registration includes double-occupancy accommodations, Friday night dinner, breakfast, inspiring guest speakers, and unforgettable moments in God's presence. Payment plans are available, and space is limited.",
+    banner: 'https://static.wixstatic.com/media/27ab9a_f541ff3c2fda4fd995eec6c247f9d4a2~mv2.jpg',
+    status: 'Past',
+    isPast: true,
+    isClosed: true,
+    isOpenForTickets: false,
+    registrationType: 'TICKETS',
+    registrationStatus: 'CLOSED_AUTOMATICALLY',
+    startDateIso: '2026-10-16T20:00:00.000Z',
+    endDateIso: '2026-10-18T18:00:00.000Z',
+    eventPageUrl: '/events/kingsdaughters',
+    guestsCount: 16,
   },
   {
     id: 'healthy-life-healthy-you',

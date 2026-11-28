@@ -19,7 +19,7 @@ const programs = [
     n: '03',
     title: 'Purposeful Life Scholarship',
     body: 'Support for women pursuing education with intention — because calling often needs a little funding behind it.',
-    href: 'https://www.culturedpearl.org/purposefullifescholarship',
+    href: '/scholarship',
   },
   {
     n: '04',
