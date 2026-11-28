@@ -80,9 +80,10 @@ export function Home() {
           className="absolute inset-0 size-full object-cover"
         />
         <div className="veil absolute inset-0" />
-        <div className="relative mx-auto w-full max-w-6xl px-6 pb-24 md:px-10 md:pb-32">
-          <p className="eyebrow text-pearl/70">{homeContent.heroEyebrow}</p>
-          <h1 className="mt-6 max-w-4xl text-[3.25rem] leading-[0.98] text-pearl md:text-[6.5rem] font-display">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20 pointer-events-none" />
+        <div className="relative z-10 mx-auto w-full max-w-6xl px-6 pb-24 md:px-10 md:pb-32">
+          <p className="eyebrow !text-white/90 drop-shadow-md font-semibold tracking-widest">{homeContent.heroEyebrow}</p>
+          <h1 className="mt-6 max-w-4xl text-[3.25rem] leading-[0.98] text-white md:text-[6.5rem] font-display drop-shadow-md">
             {splitHeroLight ? (
               <>
                 {heroTitleText.replace("God's light.", '').trim()}{' '}
@@ -92,7 +93,7 @@ export function Home() {
               heroTitleText
             )}
           </h1>
-          <p className="mt-8 max-w-md text-base leading-relaxed text-pearl/75">
+          <p className="mt-8 max-w-md text-base leading-relaxed text-white/90 drop-shadow-sm font-medium">
             {homeContent.heroSubtitle}
           </p>
           <div className="mt-10 flex flex-wrap gap-3">

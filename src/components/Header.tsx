@@ -12,6 +12,7 @@ import {
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const [headerContent, setHeaderContent] = useState<HeaderContent>({
     title: 'Main Header',
@@ -42,16 +43,34 @@ export function Header() {
     loadHeader();
   }, [loadHeader]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   useWixLiveRefresh(loadHeader);
 
   return (
-    <header className="sticky top-0 z-40 bg-pearl/95 backdrop-blur-md border-b border-sand">
-      <div className="max-w-7xl mx-auto px-6 h-30  flex items-center justify-between">
+    <header
+      className={`sticky top-0 z-40 transition-colors duration-300 border-b border-sand ${
+        scrolled ? 'bg-white shadow-sm' : 'bg-pearl/95 backdrop-blur-md'
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-6 h-28 md:h-32 flex items-center justify-between">
         <Link to="/" className="flex items-center py-1 group translate-y-2.5">
           <img
             src={headerContent.logoUrl || IMAGES.logo}
             alt={headerContent.logoAlt || 'Cultured Pearl'}
-            className="h-14 md:h-16 w-auto max-w-[200px] object-contain transition-transform duration-200 group-hover:scale-105"
+            onError={(e) => {
+              const target = e.currentTarget;
+              if (target.src !== window.location.origin + IMAGES.logo && target.src !== IMAGES.logo) {
+                target.src = IMAGES.logo;
+              }
+            }}
+            className="h-16 md:h-20 w-auto max-w-[240px] object-contain transition-transform duration-200 group-hover:scale-105"
           />
         </Link>
 

@@ -39,14 +39,23 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
           {/* Brand */}
           <div className="lg:col-span-2 space-y-4">
-            <Link to="/" className="inline-block bg-pearl/10 p-2 rounded-xl backdrop-blur-sm hover:bg-pearl/15 transition-colors">
+            <Link
+              to="/"
+              className="inline-block bg-[#F9F8F5] px-4 py-2.5 rounded-xl shadow-md hover:bg-white transition-all duration-200"
+            >
               <img
-                src={logoUrl}
+                src={logoUrl || IMAGES.logo}
                 alt="Cultured Pearl"
-                className="h-14 w-auto object-contain brightness-110"
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  if (target.src !== window.location.origin + IMAGES.logo && target.src !== IMAGES.logo) {
+                    target.src = IMAGES.logo;
+                  }
+                }}
+                className="h-14 md:h-16 w-auto object-contain"
               />
             </Link>
-            <p className="text-pearl/70 text-sm font-sans leading-relaxed max-w-sm">
+            <p className="text-pearl/80 text-sm font-sans leading-relaxed max-w-sm">
               {content.brandText}
             </p>
             <p className="font-serif italic text-sm text-gold-soft">
